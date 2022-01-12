@@ -1,25 +1,31 @@
-// bookmarksController.js
-// Dependencies
 const express = require("express");
-// Files
-const bookmarksArray = require("../models/bookmark");
+const { send } = require("express/lib/response");
 
-// `.Router` creates a new controller
-// that handles a sub-route.
-// In this case, it will handle everything
-// that starts with `/bookmarks`.
+const bookmarksArray = require("../models/bookmarks");
+
 const bookmarks = express.Router();
 
-// Routes
-// The "/bookmarks" part of the route is already assumed because app.js
-// has delegated it to us with its `app.use` line. So we just need "/"
-// as our route here, and it's still /bookmarks.
-bookmarks.get("/", (request, response) => {
+bookmarks.get("/", (_, response) => {
   console.log("GET request to /bookmarks");
   response.json(bookmarksArray);
 });
 
-// Export the bookmarks controller/router
-// so that `app` can delegate the `/bookmarks`
-// route to it.
+bookmarks.get("/:id", (request, response) => {
+  //    const id = request.params.id
+  const { id } = request.params;
+  console.log("GET request to /:id");
+  if (bookmarksArray[id]) {
+    response.json(bookmarksArray[id]);
+  }
+  response.redirect("/*");
+});
+
+bookmarks.get("/:index", (request, response) => {
+  response.send(bookmarksArray[request.params.index]);
+});
+
+bookmarks.post("/", (request, response) => {
+  response.send(request.body);
+});
+
 module.exports = bookmarks;
